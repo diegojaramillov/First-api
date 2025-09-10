@@ -113,6 +113,13 @@ def delete_series(series_id):
     return jsonify({"result": "Serie eliminada"}), 200
 
 
+# Buscar series por plataforma
+@app.route('/series/platform/<string:platform>', methods=['GET'])
+def get_series_by_platform(platform):
+    result = [s for s in comedy_series if s['platform'].lower() == platform.lower()]
+    return jsonify(result), 200
+
+
 # ================================
 # 📌 Ejecutar la app
 # ================================
