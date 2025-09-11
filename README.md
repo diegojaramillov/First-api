@@ -1,4 +1,4 @@
-CRUD API REST de Series de comedia
+CRUD API REST de Series de comedia.
 
 Este proyecto implementa una API REST en Flask para gestionar una lista de series de comedia. Se desarrolló siguiendo buenas prácticas de organización de carpetas y manejo de ramas en GitHub.
 
