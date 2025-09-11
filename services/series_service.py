@@ -1,6 +1,4 @@
-# services/series_service.py
 # Aquí va la lógica que maneja los datos (crear, leer, actualizar, eliminar).
-# Separar la lógica en "services" ayuda a que los controladores (rutas) sean simples.
 
 from data.data import comedy_series
 

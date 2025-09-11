@@ -1,7 +1,3 @@
-# models/series_model.py
-# Modelo simple para representar una serie.
-# No es obligatorio usar clases aquí, pero se incluye para claridad.
-
 class Series:
     def __init__(self, id:int, title:str, seasons:int, platform:str):
         self.id = id

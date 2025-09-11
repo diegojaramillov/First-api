@@ -1,5 +1,4 @@
-# controllers/series_controller.py
-# Aquí definimos los endpoints (rutas HTTP). Usamos un Blueprint para agruparlas.
+# Aquí definimos los endpoints (rutas HTTP). 
 
 from flask import Blueprint, jsonify, request
 from services.series_service import stats_with_percent
