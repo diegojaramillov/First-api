@@ -53,3 +53,11 @@ def stats_by_platform():
         p = s.get("platform", "Desconocida")
         stats[p] = stats.get(p, 0) + 1
     return stats
+
+def stats_with_percent():
+    stats = stats_by_platform()
+    total = sum(stats.values())
+    res = {}
+    for k,v in stats.items():
+        res[k] = {"count": v, "percent": round((v/total)*100, 2) if total>0 else 0}
+    return {"total": total, "by_platform": res}

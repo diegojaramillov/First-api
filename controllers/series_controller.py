@@ -2,7 +2,7 @@
 # Aquí definimos los endpoints (rutas HTTP). Usamos un Blueprint para agruparlas.
 
 from flask import Blueprint, jsonify, request
-
+from services.series_service import stats_with_percent
 from services.series_service import (
     get_all, get_by_id, create_series,
     update_series, delete_series, title_exists,
@@ -10,6 +10,11 @@ from services.series_service import (
 )
 
 series_bp = Blueprint('series', __name__)
+
+@series_bp.route('/series/stats-full', methods=['GET'])
+def route_stats_full():
+    """GET /series/stats-full -> stats con porcentajes"""
+    return jsonify(stats_with_percent()), 200
 
 @series_bp.route('/series', methods=['GET'])
 def route_get_all():
