@@ -45,7 +45,9 @@ def route_create_series():
                 return jsonify({"error": "'seasons' debe ser >= 1"}), 400
         except:
             return jsonify({"error": "'seasons' debe ser un número entero"}), 400
-
+    #validar que plataform tenga minimo 3 caracteres
+    if 'platform' in data and (not isinstance(data['platform'], str) or len(data['platform'].strip()) < 3):
+        return jsonify({"error": "'platform' debe ser un texto de al menos 3 caracteres"}), 400
     # Comprobar título único (evita duplicados)
     if title_exists(data['title']):
         return jsonify({"error": "Ya existe una serie con ese título"}), 400
