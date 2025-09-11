@@ -1,12 +1,15 @@
 CRUD API REST de Series de comedia
 Este proyecto implementa una API REST en Flask para gestionar una lista de series de comedia. Se desarrolló siguiendo buenas prácticas de organización de carpetas y manejo de ramas en GitHub.
+
  Funcionalidades
-Método	Endpoint	Descripción
-GET	/series	Obtiene todas las series.
-GET	/series/<id>	Obtiene una serie por ID.
-POST	/series	Crea una nueva serie.
-PUT	/series/<id>	Actualiza una serie.
-DELETE	/series/<id>	Elimina una serie.
+	
+Método       	Endpoint	        Descripción
+GET	          /series	         Obtiene todas las series.
+GET	         /series/<id>	     Obtiene una serie por ID.
+POST	        /series	          Crea una nueva serie.
+PUT	         /series/<id>	     Actualiza una serie.
+DELETE	      /series/<id>	     Elimina una serie.
+
  Estructura del Proyecto
 First-api/
 ├── app.py                 # Punto de entrada de la aplicación
@@ -17,6 +20,8 @@ First-api/
 ├── models/                # Datos simulados o modelos
 │   └── series_model.py
 └── venv/                  # Entorno virtual (ignorado en .gitignore)
+
+
 Ramas de Desarrollo
 Durante el desarrollo se trabajó con ramas para mantener el flujo de trabajo ordenado:
 
