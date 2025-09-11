@@ -1,6 +1,5 @@
-# data/data.py
-# "Base de datos" en memoria: lista de diccionarios.
-# Útil para pruebas locales sin usar una base de datos real.
+#Base de datos
+
 
 comedy_series = [
     {"id": 1, "title": "Shameless", "seasons": 11, "platform": "Netflix"},
