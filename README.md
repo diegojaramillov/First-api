@@ -5,7 +5,7 @@ lista de series de comedia.\
 Se desarrolló siguiendo buenas prácticas de organización de carpetas y
 manejo de ramas en GitHub.
 
-## 🚀 Funcionalidades
+##  Funcionalidades
 
   Método   Endpoint                Descripción
   -------- ----------------------- ---------------------------
@@ -17,7 +17,7 @@ manejo de ramas en GitHub.
 
 ------------------------------------------------------------------------
 
-## 📂 Estructura del Proyecto
+##  Estructura del Proyecto
 
     First-api/
     ├── app.py                 # Punto de entrada de la aplicación
@@ -31,7 +31,7 @@ manejo de ramas en GitHub.
 
 ------------------------------------------------------------------------
 
-## 🌱 Ramas de Desarrollo
+##  Ramas de Desarrollo
 
 Durante el desarrollo se trabajó con ramas para mantener el flujo de
 trabajo ordenado:
@@ -45,7 +45,7 @@ trabajo ordenado:
 
 ------------------------------------------------------------------------
 
-## ⚙️ Instalación y Ejecución
+##  Instalación y Ejecución
 
 1.  **Clonar el repositorio:**
 
@@ -77,7 +77,7 @@ El servidor correrá en: `http://127.0.0.1:5000`
 
 ------------------------------------------------------------------------
 
-## 🧪 Ejemplos de Prueba con CURL
+##  Ejemplos de Prueba con CURL
 
 **GET todas las series:**
 
