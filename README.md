@@ -102,3 +102,118 @@ curl -X PUT -H "Content-Type: application/json" -d '{"name": "Friends (Remastere
 ``` bash
 curl -X DELETE http://127.0.0.1:5000/series/1
 ```
+
+## Autenticación y Autorización
+
+El sistema implementa **JWT (JSON Web Tokens)** para la autenticación y autorización de usuarios.
+Se manejan 2 roles principales:
+
+* **admin** → Puede acceder a todas las rutas, crear, actualizar y eliminar recursos.
+* **user** → Solo puede acceder a rutas públicas (ej: listar series).
+
+---
+
+###  Rutas de autenticación
+
+#### **Registro**
+
+```http
+POST /auth/register
+```
+
+**Body (JSON):**
+
+```json
+{
+  "username": "user1",
+  "password": "user123",
+  "role": "user"
+}
+```
+
+#### **Login**
+
+```http
+POST /auth/login
+```
+
+**Body (JSON):**
+
+```json
+{
+  "username": "admin",
+  "password": "admin123"
+}
+```
+
+**Respuesta:**
+
+```json
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIs...",
+  "user": {
+    "id": 1,
+    "username": "admin",
+    "role": "admin"
+  }
+}
+```
+
+El valor de `access_token` debe incluirse en el header de las peticiones a rutas protegidas:
+
+```
+Authorization: Bearer <ACCESS_TOKEN>
+```
+
+---
+
+###  Rutas de Series (ejemplo de validación por rol)
+
+#### **Listar series (público)**
+
+```http
+GET /series/
+```
+
+#### **Crear serie (solo admin)**
+
+```http
+POST /series/
+```
+
+**Body (JSON):**
+
+```json
+{
+  "title": "Breaking Bad",
+  "description": "Serie sobre química y crimen",
+  "year": 2008
+}
+```
+
+#### **Actualizar serie (solo admin)**
+
+```http
+PUT /series/<id>
+```
+
+#### **Eliminar serie (solo admin)**
+
+```http
+DELETE /series/<id>
+```
+
+---
+
+###  Validación de roles
+
+* Los endpoints de administración (`POST`, `PUT`, `DELETE` en `/series`) requieren rol `admin`.
+* Si un usuario con rol `user` intenta acceder, recibe:
+
+```json
+{
+  "error": "Access forbidden: insufficient role"
+}
+```
+
+

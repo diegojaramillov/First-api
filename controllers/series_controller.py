@@ -1,97 +1,46 @@
-# Aquí definimos los endpoints (rutas HTTP). 
-
-from flask import Blueprint, jsonify, request
-from services.series_service import stats_with_percent
-from services.series_service import (
-    get_all, get_by_id, create_series,
-    update_series, delete_series, title_exists,
-    stats_by_platform
-)
+from flask import Blueprint, request, jsonify
+from services.series_service import SeriesService
+from services.role_service import roles_required
+from repositories.series_repository import SeriesRepository
 
 series_bp = Blueprint('series', __name__)
 
-@series_bp.route('/series/stats-full', methods=['GET'])
-def route_stats_full():
-    """GET /series/stats-full -> stats con porcentajes"""
-    return jsonify(stats_with_percent()), 200
+@series_bp.route('/', methods=['GET'])
+def list_series():
+    items = SeriesService.list_series()
+    return jsonify([s.to_dict() for s in items]), 200
 
-@series_bp.route('/series', methods=['GET'])
-def route_get_all():
-    """GET /series -> devuelve la lista completa de series"""
-    return jsonify(get_all()), 200
+@series_bp.route('/<int:series_id>', methods=['GET'])
+def get_series(series_id):
+    s = SeriesService.get_series(series_id)
+    if not s:
+        return jsonify({'message': 'Not found'}), 404
+    return jsonify(s.to_dict()), 200
 
-@series_bp.route('/series/<int:series_id>', methods=['GET'])
-def route_get_by_id(series_id):
-    """GET /series/<id> -> devuelve una serie por id"""
-    s = get_by_id(series_id)
-    if s is None:
-        return jsonify({"error": "Serie no encontrada"}), 404
-    return jsonify(s), 200
+@series_bp.route('/', methods=['POST'])
+@roles_required('admin')
+def create_series():
+    data = request.get_json() or {}
+    if not data.get('title'):
+        return jsonify({'message': 'title is required'}), 400
+    s = SeriesService.create_series(data)
+    return jsonify(s.to_dict()), 201
 
-@series_bp.route('/series', methods=['POST'])
-def route_create_series():
-    """
-    POST /series
-    Crea una nueva serie.
-    Requiere JSON con 'title' (obligatorio).
-    """
-    if not request.is_json:
-        return jsonify({"error": "Se esperaba JSON en el body"}), 400
-    data = request.get_json()
+@series_bp.route('/<int:series_id>', methods=['PUT'])
+@roles_required('admin')
+def update_series(series_id):
+    s = SeriesService.get_series(series_id)
+    if not s:
+        return jsonify({'message': 'Not found'}), 404
+    data = request.get_json() or {}
+    s = SeriesService.update_series(s, data)
+    return jsonify(s.to_dict()), 200
 
-    # Validaciones básicas
-    if 'title' not in data or not isinstance(data['title'], str) or not data['title'].strip():
-        return jsonify({"error": "Falta 'title' o no es válido"}), 400
-    if 'seasons' in data:
-        try:
-            seasons = int(data['seasons'])
-            if seasons < 1:
-                return jsonify({"error": "'seasons' debe ser >= 1"}), 400
-        except:
-            return jsonify({"error": "'seasons' debe ser un número entero"}), 400
-    #validar que plataform tenga minimo 3 caracteres
-    if 'platform' in data and (not isinstance(data['platform'], str) or len(data['platform'].strip()) < 3):
-        return jsonify({"error": "'platform' debe ser un texto de al menos 3 caracteres"}), 400
-    # Comprobar título único (evita duplicados)
-    if title_exists(data['title']):
-        return jsonify({"error": "Ya existe una serie con ese título"}), 400
-
-    new = create_series(data)
-    return jsonify(new), 201
-
-@series_bp.route('/series/<int:series_id>', methods=['PUT'])
-def route_update_series(series_id):
-    """
-    PUT /series/<id>
-    Actualiza una serie existente. Body: JSON con los campos a actualizar.
-    """
-    if not request.is_json:
-        return jsonify({"error": "Se esperaba JSON en el body"}), 400
-    data = request.get_json()
-
-    # Si envían seasons validar
-    if 'seasons' in data:
-        try:
-            seasons = int(data['seasons'])
-            if seasons < 1:
-                return jsonify({"error": "'seasons' debe ser >= 1"}), 400
-        except:
-            return jsonify({"error": "'seasons' debe ser un número entero"}), 400
-
-    updated = update_series(series_id, data)
-    if updated is None:
-        return jsonify({"error": "Serie no encontrada"}), 404
-    return jsonify(updated), 200
-
-@series_bp.route('/series/<int:series_id>', methods=['DELETE'])
-def route_delete_series(series_id):
-    """DELETE /series/<id> -> elimina una serie"""
-    deleted = delete_series(series_id)
-    if not deleted:
-        return jsonify({"error": "Serie no encontrada"}), 404
-    return jsonify({"result": "Serie eliminada"}), 200
-
-@series_bp.route('/series/stats', methods=['GET'])
-def route_stats():
-    """GET /series/stats -> devuelve estadísticas (conteo por plataforma)"""
-    return jsonify(stats_by_platform()), 200
+@series_bp.route('/<int:series_id>', methods=['DELETE'])
+@roles_required('admin')
+def delete_series(series_id):
+    s = SeriesService.get_series(series_id)
+    if not s:
+        return jsonify({'message': 'Not found'}), 404
+    SeriesService.delete_series(s)
+    return jsonify({'message': 'Deleted'}), 200
