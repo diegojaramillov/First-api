@@ -19,5 +19,6 @@ class AuthService:
 
         # guardamos role en additional_claims para acceder fácil desde get_jwt()
         additional_claims = {'role': user.role, 'username': user.username}
-        token = create_access_token(identity=user.id, additional_claims=additional_claims)
+        # Use string identity to ensure JWT 'sub' claim is a string (some JWT libraries require this)
+        token = create_access_token(identity=str(user.id), additional_claims=additional_claims)
         return {'access_token': token, 'user': user.to_dict()}, 200

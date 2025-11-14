@@ -1,115 +1,56 @@
-const API = "http://127.0.0.1:5000"; 
-let token = localStorage.getItem("token");
-let currentUser = JSON.parse(localStorage.getItem("user"));
-
-if (token && currentUser) {
-    showApp();
+function getToken() {
+    return localStorage.getItem('token');
 }
 
-function showApp() {
-    document.getElementById("authSection").style.display = "none";
-    document.getElementById("appSection").style.display = "block";
-    document.getElementById("welcome").innerText = `Bienvenido ${currentUser.username} (rol: ${currentUser.role})`;
-    document.getElementById("adminPanel").style.display = currentUser.role === "admin" ? "block" : "none";
+function getUserRole() {
+    return localStorage.getItem('role');
 }
 
-function showAuth() {
-    document.getElementById("authSection").style.display = "block";
-    document.getElementById("appSection").style.display = "none";
+function showLogin() {
+    document.getElementById('auth-container').style.display = 'block';
+    document.getElementById('home-container').style.display = 'none';
+    setHeaderAuthState(false);
 }
 
-async function login() {
-    const username = document.getElementById("username").value;
-    const password = document.getElementById("password").value;
+function showAdmin() {
+    showHome();
+    document.getElementById('admin-panel').style.display = 'block';
+    setHeaderAuthState(true);
+}
 
-    const res = await fetch(`${API}/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password })
-    });
+window.onload = () => {
+    const token = getToken();
+    const role = getUserRole();
 
-    const data = await res.json();
-    if (!data.access_token) {
-        document.getElementById("authResult").innerText = data.message;
+    if (!token) {
+        showLogin();
         return;
     }
 
-    token = data.access_token;
-    currentUser = data.user;
+    if (role === "admin") showAdmin();
+    else showHome();
+    // Attach ripple handlers to buttons
+    attachRipples();
+};
 
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(currentUser));
-
-    showApp();
+function setHeaderAuthState(loggedIn){
+    const headerActions = document.querySelector('.header-actions');
+    if(!headerActions) return;
+    headerActions.style.display = loggedIn ? 'flex' : 'none';
 }
 
-async function registerUser() {
-    const username = document.getElementById("newUsername").value;
-    const password = document.getElementById("newPassword").value;
-    const role = document.getElementById("newRole").value;
-
-    const res = await fetch(`${API}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ username, password, role })
+function attachRipples(){
+    document.querySelectorAll('button, .btn-icon').forEach(btn=>{
+        btn.addEventListener('click', function(e){
+            const rect = this.getBoundingClientRect();
+            const r = document.createElement('span');
+            r.className='ripple';
+            const size = Math.max(rect.width, rect.height);
+            r.style.width = r.style.height = size + 'px';
+            r.style.left = (e.clientX - rect.left - size/2) + 'px';
+            r.style.top = (e.clientY - rect.top - size/2) + 'px';
+            this.appendChild(r);
+            setTimeout(()=>{ r.remove(); }, 700);
+        });
     });
-
-    const data = await res.json();
-    document.getElementById("authResult").innerText = data.message || JSON.stringify(data);
-}
-
-function logout() {
-    token = null;
-    currentUser = null;
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    showAuth();
-}
-
-async function loadSeries() {
-    const res = await fetch(`${API}/series/`);
-    const data = await res.json();
-    document.getElementById("seriesList").innerText = JSON.stringify(data, null, 2);
-}
-
-async function createSeries() {
-    const title = document.getElementById("title").value;
-
-    const res = await fetch(`${API}/series/`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ title })
-    });
-
-    document.getElementById("actionResult").innerText = JSON.stringify(await res.json());
-}
-
-async function updateSeries() {
-    const id = document.getElementById("editId").value;
-    const title = document.getElementById("editTitle").value;
-
-    const res = await fetch(`${API}/series/${id}`, {
-        method: "PUT",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({ title })
-    });
-
-    document.getElementById("actionResult").innerText = JSON.stringify(await res.json());
-}
-
-async function deleteSeries() {
-    const id = document.getElementById("deleteId").value;
-
-    const res = await fetch(`${API}/series/${id}`, {
-        method: "DELETE",
-        headers: { "Authorization": `Bearer ${token}` }
-    });
-
-    document.getElementById("actionResult").innerText = JSON.stringify(await res.json());
 }

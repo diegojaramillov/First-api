@@ -1,3 +1,59 @@
+# First-api — Series App
+
+Pequeña API REST con frontend estático para gestionar series (CRUD) con autenticación JWT.
+
+## Estado
+- Backend: Flask + Flask-JWT-Extended + SQLAlchemy
+- Frontend: Vanilla JS, servido estático desde `frontend/`
+- Tema UI: naranja/negro, tipografía Montserrat, botones con ripple y toast
+
+## Requisitos
+- Python 3.8+
+- Dependencias en `requirements.txt` (instalar con `pip install -r requirements.txt`).
+
+## Ejecución (desarrollo)
+
+1. Iniciar backend (en la raíz del repo):
+
+```powershell
+$env:DEBUG='0'; python app.py
+```
+
+Con `DEBUG=1` el servidor usará autoreload; para pruebas E2E recomendamos `DEBUG=0`.
+
+2. Servir frontend (opcional — para abrir en navegador):
+
+```powershell
+cd frontend
+python -m http.server 5500
+# abrir http://127.0.0.1:5500
+```
+
+3. Probar rutas manualmente o ejecutar pruebas E2E (desde la raíz):
+
+```powershell
+python -u tests\api_e2e.py
+```
+
+El E2E crea un usuario `e2e_admin` con contraseña `admin123` si no existe, hace login y prueba crear/editar/borrar una serie.
+
+## Notas de diseño
+- Tokens JWT: `identity` se guarda como string para evitar errores de algunas librerías.
+- Frontend guarda `token`, `role` y `username` en `localStorage`.
+- Se agregó UI mejorada en `frontend/styles.css` y microinteracciones en `frontend/app.js`.
+
+## Archivos modificados principales
+- `app.py`, `services/auth_service.py`
+- `frontend/` (`index.html`, `api.js`, `app.js`, `auth.js`, `home.js`, `admin.js`, `styles.css`)
+- `tests/api_e2e.py`
+
+## Próximos pasos recomendados
+- Usar servidor WSGI (Gunicorn/Waitress) y HTTPS para producción.
+- Añadir manejo de refresh tokens o re-login automático en frontend.
+- Mejorar validación de formularios y mensajes de error en UI.
+
+---
+Si quieres, hago el deploy en un contenedor o agrego CI para ejecutar tests.
 # CRUD API REST de Series de Comedia
 
 Este proyecto implementa una API REST en **Flask** para gestionar una
